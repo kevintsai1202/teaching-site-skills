@@ -88,7 +88,7 @@ If you find yourself adding "this is about AI workshops" to a sub-skill prompt, 
 
 ## The Bilingual Trigger Strategy
 
-Every sub-skill's description has both Chinese and English trigger phrases. Reason: Claude Code skill matching is keyword-based against the description; users will type whichever language they're comfortable in. Halving the phrase list to one language halves the recall rate.
+Every sub-skill's description has both Chinese and English trigger phrases. Reason: skill matching across most agents (Claude Code, Codex, Antigravity, etc.) is keyword-based against the description; users will type whichever language they're comfortable in. Halving the phrase list to one language halves the recall rate.
 
 Format: "Triggers on phrases like `\"中文\"`, `\"中文 2\"`, `\"english\"`, `\"english 2\"`."
 

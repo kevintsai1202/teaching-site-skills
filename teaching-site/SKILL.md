@@ -52,7 +52,7 @@ Stages 1–5 are usually traversed in order, but users often jump back (add a un
 
 ## Sub-Skill Dispatch Table
 
-Invoke these via the `Skill` tool when the matching stage is active:
+Invoke the matching sub-skill via your agent's skill activation mechanism (Claude Code: `Skill` tool, Codex: `skill` tool, Antigravity / Gemini CLI: `activate_skill`) when the matching stage is active:
 
 | Stage | Sub-skill | Trigger phrases |
 |---|---|---|

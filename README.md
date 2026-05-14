@@ -1,6 +1,8 @@
 # Teaching Site Skills
 
-一套 **11 個 Claude Code skills**，捕捉「從零到一打造互動式教學網站」的完整工作流程。涵蓋：綱要設計 → 內容撰寫 → 純前端 SPA → 互動效果 → 視覺資產 → 企業包班濃縮 → 電子書產出，加上三個橫切 skill：行為驗證、資料稽核、視覺設計系統。
+一套 **11 個 agent skills**（[Anthropic Skills 格式](https://code.claude.com/docs/en/skills)），捕捉「從零到一打造互動式教學網站」的完整工作流程。涵蓋：綱要設計 → 內容撰寫 → 純前端 SPA → 互動效果 → 視覺資產 → 企業包班濃縮 → 電子書產出，加上三個橫切 skill：行為驗證、資料稽核、視覺設計系統。
+
+支援 Claude Code、Codex、Antigravity（Gemini）、Cursor、OpenCode 等 [55+ AI coding agent](https://github.com/vercel-labs/skills)（透過 `skills` CLI 安裝）。原始開發與主測平台為 Claude Code，其他 agent 為相容支援。
 
 源自一個四天工作坊網站（行政與財務 AI 自動化）的實作經驗，但每個 skill 都已抽象到通用層級——可套用到任何「分章節 / 多單元 / 含素材」的教學網站。
 
@@ -8,8 +10,10 @@
 
 ## 結構：1 個總入口 + 10 個子 skill
 
-```
-~/.claude/skills/
+安裝後展開於各 agent 的 skills 目錄（Claude Code 為 `~/.claude/skills/`、Codex 為 `~/.codex/skills/`、Antigravity 為 `~/.gemini/antigravity/skills/`，其餘參見 [skills CLI 對照表](https://github.com/vercel-labs/skills)）：
+
+```text
+<agent-skills-dir>/
 ├── teaching-site/                          ← ⭐ 總入口（super-skill with references/）
 │   ├── SKILL.md                            ←   架構 + dispatch 邏輯
 │   └── references/                         ←   依需要載入的補充
@@ -39,23 +43,45 @@
 
 ## 安裝
 
-前提：已安裝 [Claude Code](https://claude.ai/code)。
+前提：已安裝任一支援的 AI coding agent（Claude Code、Codex、Antigravity、Cursor、OpenCode 等）與 Node.js（`npx` 隨附）。
 
-### Windows / PowerShell
-
-```powershell
-Expand-Archive teaching-site-skills.zip -DestinationPath "$env:USERPROFILE\.claude\skills" -Force
-```
-
-### macOS / Linux
+透過 [`skills` CLI](https://github.com/vercel-labs/skills) 一鍵安裝（Windows / macOS / Linux 共用同一條指令）：
 
 ```bash
-unzip teaching-site-skills.zip -d ~/.claude/skills/
+npx skills add kevintsai1202/teaching-site-skills --all
 ```
 
-解壓後重啟 Claude Code（或在現有 session `/reload`），11 個 skill 自動載入。
+CLI 會**自動偵測**機器上已安裝的 agent 並裝到對應的 skills 目錄。安裝完重新啟動該 agent（或執行其 reload 指令，如 Claude Code 的 `/reload`），11 個 skill 自動載入。
 
-> **重要**：11 個 skill 互相引用，必須全部一起安裝。
+> **重要**：11 個 skill 互相引用，請務必加 `--all` 一次裝齊；單獨抽裝會在 dispatch 時找不到下游 skill。
+
+**指定特定 agent**（沒被自動偵測到、或想裝到不同 agent 時）：
+
+```bash
+# 只裝到 Claude Code  →  ~/.claude/skills/
+npx skills add kevintsai1202/teaching-site-skills --all --agent claude-code
+
+# 只裝到 Codex         →  ~/.codex/skills/
+npx skills add kevintsai1202/teaching-site-skills --all --agent codex
+
+# 只裝到 Antigravity   →  ~/.gemini/antigravity/skills/
+npx skills add kevintsai1202/teaching-site-skills --all --agent antigravity
+
+# 一次裝到全部 55+ 支援的 agent
+npx skills add kevintsai1202/teaching-site-skills --all --agent '*'
+```
+
+**其他常用指令**：
+
+```bash
+# 先列出 repo 內可裝的 skill（不安裝）
+npx skills add kevintsai1202/teaching-site-skills --list
+
+# 只裝特定幾個 skill（不建議，會打斷 pipeline）
+npx skills add kevintsai1202/teaching-site-skills --skill teaching-site --skill course-outline-design
+```
+
+> **跨 agent 注意**：本套 skill 在 Claude Code 上實測過完整 4-day workshop pipeline。其他 agent 為靜態相容支援——CLI 會正確安裝、frontmatter 格式相容，但 dispatch 體驗、trigger phrase 命中率、子 skill 自動發現等行為依各 agent 的 skill 匹配演算法而異，建議首次使用時跑一次 `做課程網站` happy path 驗證。
 
 ---
 
