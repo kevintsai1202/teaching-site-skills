@@ -103,9 +103,37 @@ A 1–2 page document describing the recurring fictional context. Include:
 - **No shared scenario** — without it, every unit's example is one-off, and learners can't see how techniques compound.
 - **Hour totals that don't add up** — the meta says "6 hours/day" but the time table only fills 4.5 hours. Always sum the time table and reconcile.
 
+## Completion Gate (Hard Rule — must pass before hand-off)
+
+Before declaring "outline locked" and suggesting `course-content-authoring`, every item below must have a **written artefact** (not just a verbal "yes"). Walk the user through them one at a time; if an answer is vague, ask one clarifying question before moving on.
+
+1. **Audience + prerequisite** — recorded in `課程總覽.md` `對象` field as a concrete sentence (e.g. "行政部門人員，能用 Excel 但沒寫過程式"). Generic "新手" is not enough.
+2. **Total hours + day count** — `總時數` populated AND `每日主題` table has exactly that many day rows. Sum the time tables in each `Day{n}/課程大綱.md` and confirm it equals the daily hours.
+3. **Shared scenario (optional, but must be explicitly decided)** — either:
+   - `共用案例設定.md` exists with named company/character + core problem + 1–2 example data shapes; OR
+   - `課程總覽.md` contains an explicit one-line note: `本課無共用案例，每單元獨立舉例`.
+
+   Silence does not pass — you must ask and record one of the two outcomes.
+4. **Learning outcome verbs** — every day's `學習目標` uses **action verbs** (`use`, `build`, `evaluate`, `design`, `compare`). Knowledge verbs (`understand`, `know`, `learn about`) fail the gate — ask the user to rephrase.
+5. **Assessment shape** — explicitly recorded in `課程總覽.md` (e.g. "pre-test 5 題 / post-test 10 題 / 每日 quiz 3 題") OR explicitly waived with a one-line note ("本課無評量，採作品集驗收"). Silence does not pass.
+
+If the user pushes "可以了，先開始寫內容" before all 5 items have written artefacts, refuse politely:
+
+> 「Stage 1 沒鎖好，後面 content/SPA/visual 任一階段改 outline 就要連動多檔重做。先把第 N 項補上，大概 X 分鐘，之後省下的不只這些。」
+
+### Decision-time Defaults (ask, don't assume)
+
+When the user genuinely doesn't know an answer, **do not propose templates or fill in placeholder defaults** — ask one short direct question and wait for their answer. Looping on a wrong assumption is more expensive than one extra round-trip.
+
+- **Audience unknown** → ask directly: 「這堂課是為誰開的？是哪個部門 / 哪種角色的學員，他們現在會什麼、不會什麼？」 Wait for a concrete answer before moving to item 2.
+- **Hours / days unknown** → ask directly: 「總時數和每日時段怎麼安排？例如『2 天 × 6 小時』或『每週三 14:00–17:00 共 4 週』。」 Do NOT propose 1d×6h / 2d×6h / 4d×6h templates — the user's calendar drives this, not our guess.
+- **Shared scenario undecided** → ask directly: 「這套課程要不要設一個貫穿全程的虛構案例（例如一家公司、一個角色，讓所有單元的例子都圍繞它）？要的話我們一起設定；不要的話就在 `課程總覽.md` 寫『本課無共用案例』然後跳過第 3 項。」 Accept either answer without pushing for a scenario.
+
+The principle: this skill stays decisive by **routing on clear answers**, not by **assuming on silence**.
+
 ## Hand-off to Next Stage
 
-When this skill finishes, the user should have:
+Only after the Completion Gate passes, the user should have:
 - A complete set of outline `.md` files
 - A clear unit ID convention (e.g. `d{n}-u{m}`) that the content-authoring stage will use
 - A pinned shared scenario

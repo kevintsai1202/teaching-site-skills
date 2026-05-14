@@ -69,11 +69,36 @@ Invoke the matching sub-skill via your agent's skill activation mechanism (Claud
 
 The last three (marked ╳) are **cross-cutting** — not tied to a stage. The first two (verification / audit) are the safety net for runtime behaviour and cross-file references. The third (design-system) is the visual authority every stage reads from.
 
+## Stage 1 Gate (Hard Rule — read before any dispatch)
+
+Before dispatching to ANY stage (including 2–6, 5b, and the cross-cutting skills), confirm Stage 1 deliverables exist on disk:
+
+- [ ] An overview file (e.g. `課程總覽.md`) with populated `對象` / `總時數` / `每日主題` fields — not just a heading.
+- [ ] At least one per-day outline file (e.g. `Day1/課程大綱.md`) listing unit IDs and learning goals.
+
+> Shared scenario (`共用案例設定.md`) is **optional** — it's a downstream decision handled by `course-outline-design`'s Completion Gate, not an entry requirement here.
+
+**If either of the two is missing or only a stub:** do NOT dispatch downstream, even if the user explicitly named a later stage ("做電子書", "幫我寫 quiz"). Dispatch to `course-outline-design` first and tell the user:
+
+> 「我看到還沒有完整的課程綱要 — 直接跳到 Stage N 會讓後面每改一次 outline 就連動多個檔案重做。先用 `course-outline-design` 把 outline 鎖定，大概 10 分鐘決策，省下後續數小時 rework。」
+
+### Override Policy (lenient with audit trail)
+
+If the user explicitly insists on skipping the gate ("我知道，先做就好", "skip the outline, just do X"), proceed under these conditions:
+
+1. Ask them to paste **3 bullets in chat** before any downstream action:
+   - **對象**：一句話描述學員是誰 + 先備知識
+   - **總時數 + 每日時段**：例如「2 天 × 6 小時」
+   - **每日主題**：Day 1 / Day 2 / ... 各一行
+2. Save those 3 bullets **verbatim** into a stub `課程總覽.md` (mark it `<!-- stub created via Stage 1 Gate override on YYYY-MM-DD -->`) before dispatching to the requested stage.
+3. If the user refuses even the 3-bullet stub, fall back to the strict path — refuse the override and dispatch to `course-outline-design`.
+
+The stub is the audit trail: future sessions reading this site can immediately see Stage 1 was bypassed and recover context.
+
 ## How to Detect the Current Stage
 
-Before dispatching, look for these signals:
+After the Stage 1 Gate passes, look for these signals to pick the right downstream stage:
 
-- **No `.md` files yet, only an idea** → Stage 1.
 - **Outline `.md` exists, but no `course-data.js`** → Stage 2 (content), or skip to 3 if user only wants a thin demo.
 - **`course-data.js` exists, but `index.html` has no renderers / no local serve** → Stage 3.
 - **SPA renders, but progress isn't persisted / no responsive / no theme** → Stage 4.
