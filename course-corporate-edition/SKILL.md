@@ -1,6 +1,6 @@
 ---
 name: course-corporate-edition
-description: Use this skill when an existing multi-day public-class teaching site needs to be condensed and re-packaged for a corporate in-house training — typically a half-day or one-day intensive (e.g. 4-day public class → 6-hour corporate). Triggers on phrases like "企業包班", "濃縮版", "客製化課程", "corporate edition", "intensive version", "in-house training", "客戶端課程", "壓縮成一天", or when the user wants a single-folder zippable deliverable for a client. This skill builds on top of an existing site: it picks units, condenses time allocation, embeds data into a single HTML, sets up asset fallback chains, and produces an offline-ready package.
+description: Use this skill when an existing multi-day public-class teaching site needs to be condensed and re-packaged for a corporate in-house training — typically a half-day or one-day intensive (e.g. 4-day public class → 6-hour corporate). Triggers on phrases like "企業包班", "濃縮版", "客製化課程", "corporate edition", "intensive version", "in-house training", "客戶端課程", "壓縮成一天", or when the user wants a single-folder zippable deliverable for a client. This skill builds on top of an existing site — picking units, condensing time allocation, embedding data into a single HTML, setting up asset fallback chains, and producing an offline-ready package.
 ---
 
 # Course Corporate Edition
