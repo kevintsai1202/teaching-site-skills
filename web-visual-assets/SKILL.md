@@ -5,6 +5,8 @@ description: Use this skill when a content-complete website has missing/placehol
 
 # Web Visual Assets
 
+> **Schema authority**: the `Illustration` primitive shape (`{name, kind, alt, spec}` and `{kind: 'waived', reason}`) and the per-unit `illustrations[]` Coverage Floor are defined in [`_shared/domain-primitives.md`](../_shared/domain-primitives.md) §11.
+
 This skill produces the **visual layer** of a teaching site. Four asset sources cover virtually every need, each with different tradeoffs.
 
 ## Asset Source Decision Tree

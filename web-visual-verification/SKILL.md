@@ -5,6 +5,10 @@ description: Use this skill whenever you need to verify that a web UI actually w
 
 # Web Visual Verification
 
+> **Schema authority**: when verifying that data renders correctly, the source-of-truth field names come from [`_shared/domain-primitives.md`](../_shared/domain-primitives.md). E.g. asserting `unit.illustrations.length >= 1` matches §11's Coverage Floor.
+>
+> **Reference implementation**: `d:/GitHub/ai-workshop/scripts/verify-*.mjs` for production verify-script patterns (multi-viewport, console-error capture, screenshot-on-fail).
+
 This skill produces **Playwright-based runtime verification scripts** that drive the actual rendered site and answer "does it behave correctly?". The skill emerged from a teaching-website project but applies to any static or dynamic web UI.
 
 ## When to Invoke

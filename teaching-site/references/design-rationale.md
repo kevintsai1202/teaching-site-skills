@@ -82,7 +82,7 @@ Critical: **none of these skills hardcode "AI workshop" content**. The example w
 This means:
 - A cooking class could use these skills unchanged.
 - An accounting training could use these skills unchanged.
-- The user's `課程內容.md` carries all topic-specific knowledge; the skill prompts carry only structural knowledge.
+- The user's `content.md` carries all topic-specific knowledge; the skill prompts carry only structural knowledge.
 
 If you find yourself adding "this is about AI workshops" to a sub-skill prompt, refactor — that example belongs in the user's content.
 

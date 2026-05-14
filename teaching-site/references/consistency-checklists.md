@@ -4,15 +4,15 @@ The actual hard part of teaching site maintenance: every change ripples to other
 
 ## After Stage 1 (outline change)
 
-- [ ] Day count / hours / schedule consistent in: `課程總覽.md`, each `Day{n}/課程大綱.md`, and (if Stage 3+ exists) `course-data.js:meta.days[]`
+- [ ] Day count / hours / schedule consistent in: `overview.md`, each `day{n}/outline.md`, and (if Stage 3+ exists) `course-data.js:meta.days[]`
 - [ ] Shared scenario references match across all days
 
 ## After Stage 2 (content change)
 
-- [ ] New material file dropped into `教學素材/` folder → added to `course-data.js:materials[]` AND in the SPA's material URL router (`getMaterialUrl()`)
+- [ ] New material file dropped into `course-package/materials/` folder → added to `course-data.js:materials[]` AND in the SPA's material URL router (`getMaterialUrl()`)
 - [ ] Quiz item count change → updates BOTH `quiz[]` array AND every hardcoded "(N題)" / "— / N" / "passing score" string in the SPA (typically 5 places)
 - [ ] Per-unit `materials[]` references match `course-data.js:materials[]` item IDs
-- [ ] Every outline unit ID has a matching `## u-{id}` section in the corresponding `Day{n}/課程內容.md` (no orphaned outline units)
+- [ ] Every outline unit ID has a matching `## u-{id}` section in the corresponding `day{n}/content.md` (no orphaned outline units)
 - [ ] Every unit section declares `**圖片需求 (illustrations)**` with 1–3 entries (or an explicit `waived` line) — this is the Stage 5 input contract
 
 ## After Stage 3 (SPA wiring)

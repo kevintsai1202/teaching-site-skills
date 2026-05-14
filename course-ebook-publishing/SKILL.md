@@ -5,6 +5,10 @@ description: Use this skill ONLY AFTER a teaching site is feature-complete and s
 
 # Course Ebook Publishing
 
+> **Schema authority**: this skill reads the live `window.COURSE` object whose shape is defined in [`_shared/domain-primitives.md`](../_shared/domain-primitives.md). Quiz / pre-test / post-test items are filtered OUT of the ebook (per §10 quiz item rules + ebook content policy).
+>
+> **Filename convention (English-first)**: outputs land in `dist/{name}.pdf` / `dist/{name}.docx`. Source markdown is composed under `dist/master.md`.
+
 This skill turns a finished teaching website into a book — PDF (primary) and optionally DOCX (for editorial review or further authoring). It is a **post-site** step: it consumes `window.COURSE` from the live site, never re-authoring content.
 
 ## When to Invoke

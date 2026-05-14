@@ -5,6 +5,12 @@ description: Use this skill whenever you're making visual / styling decisions on
 
 # Teaching Site Design System
 
+> **Token starter** (copy this, don't re-derive): [`templates/tokens.css`](templates/tokens.css) — full `:root` block + dark theme + signature components (day-hero, glass-card, prompt-card, task-list, learning-goal, concept, unit, material, table). Paste into the `<style>` block of `index.html` (vanilla SPA pattern) or use as external `style.css`.
+>
+> **Schema authority**: this skill defines visual tokens; data field names live in [`_shared/domain-primitives.md`](../_shared/domain-primitives.md). When styling a component, read that file to know the data shape you're rendering.
+>
+> **Reference implementation**: `d:/GitHub/ai-workshop/index.html:11-1700` — the full production CSS this skill's tokens were extracted from.
+
 This skill defines the **visual layer** of a teaching site: color tokens, typography, geometry, components, dark mode strategy, and — critically — the **reasoning behind each decision**. The rationale matters more than the literal values; future sites can re-tune the values, but the *why* survives across projects.
 
 ## When to Invoke

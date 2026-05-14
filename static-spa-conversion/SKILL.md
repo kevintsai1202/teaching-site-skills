@@ -5,6 +5,18 @@ description: Use this skill when you have structured course content (or any chap
 
 # Static SPA Conversion
 
+> **Schema authority**: all `window.COURSE` field names come from [`_shared/domain-primitives.md`](../_shared/domain-primitives.md). When the schema example below diverges from that file, that file wins.
+>
+> **Starter templates** (copy these, don't re-derive):
+>
+> - [`templates/index.html`](templates/index.html) — scaffold shell with render pipeline skeleton
+> - [`templates/course-data.template.js`](templates/course-data.template.js) — empty schema example with TODO markers for every primitive
+> - [`../teaching-site-design-system/templates/tokens.css`](../teaching-site-design-system/templates/tokens.css) — paste into `<style>` block, or copy as `style.css` next to `index.html`
+>
+> **Reference implementation**: `d:/GitHub/ai-workshop/index.html` (4125 lines, fully populated). Use as visual + render-pattern reference; do not copy course-specific content from it.
+>
+> **Filename convention (English-first)**: `course-package/`, `day{n}/outline.md`, `day{n}/content.md`, `materials/`, `overview.md`. Legacy Chinese names (`完整課程包/`, `課程大綱.md`, `教學素材/`, etc.) are deprecated — see `_shared/domain-primitives.md` §0 for full mapping.
+
 This skill turns chapter-based markdown content into a working single-page app. The architectural commitments are deliberate and worth understanding before you start.
 
 ## The Three Architectural Commitments
@@ -25,8 +37,8 @@ project-root/
 ├── tools-data.js           ← optional: window.TOOLS (if showcasing tools)
 ├── package.json            ← just `{"scripts": {"serve": "npx serve ."}}` and scraping tooling
 ├── assets/                 ← images, illustrations
-└── 完整課程包/             ← markdown source (read-only from SPA's perspective)
-    └── 教學素材/           ← files linked from the SPA via getMaterialUrl()
+└── course-package/             ← markdown source (read-only from SPA's perspective)
+    └── materials/           ← files linked from the SPA via getMaterialUrl()
 ```
 
 `index.html` includes data files via plain `<script src="course-data.js"></script>` — no module imports, no fetch. The browser loads them in order, populating `window.COURSE` before `init()` runs.
@@ -132,7 +144,7 @@ The trickiest piece. The SPA needs to map a material's `name` and `type` to a re
 
 ```js
 function getMaterialUrl(name, type) {
-  const base = '完整課程包/教學素材';
+  const base = 'course-package/materials';
   if (type === 'PDF 文件') {
     // PDFs trigger download instead of inline view
     if (name.includes('員工差勤')) return `${base}/pdf/員工差勤辦法.pdf`;
@@ -148,7 +160,7 @@ function getMaterialUrl(name, type) {
 ```
 
 **The three-place sync rule** — when adding a material, update all of:
-1. Drop the file into `完整課程包/教學素材/`
+1. Drop the file into `course-package/materials/`
 2. Add an entry to `course-data.js:materials[]` (and any unit's `materials[]`)
 3. Add the `name.includes(...)` rule to `getMaterialUrl()`
 

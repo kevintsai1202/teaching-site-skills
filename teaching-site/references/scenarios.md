@@ -31,7 +31,7 @@ When the user's request is one of the patterns below, you already know which sub
 ## Derivative Deliverables
 
 **"幫我把公開班濃縮成企業包班 6 小時版"**
-→ Stage 5b (`course-corporate-edition`). Pre-requisite: public-class site is feature-complete and stable. Output: a new `企業包班/{client}_{hours}h/` folder.
+→ Stage 5b (`course-corporate-edition`). Pre-requisite: public-class site is feature-complete and stable. Output: a new `corporate-editions/{client}_{hours}h/` folder.
 
 **"網站做完了，幫我印一份 PDF 給學員"**
 → Stage 6 (`course-ebook-publishing`). Verify site is stable first; if it's not, defer. Mention to user that the ebook is a derivative — site changes after this point require re-running the ebook build.

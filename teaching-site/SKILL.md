@@ -5,6 +5,12 @@ description: Use this skill as the main entry point whenever the user wants to b
 
 # Teaching Site — Main Entry Point
 
+> **Schema authority**: all primitive field names (unit / concept / prompt / task / material / quiz / faq / illustration) and the canonical project layout come from [`_shared/domain-primitives.md`](../_shared/domain-primitives.md). When dispatching to any sub-skill, expect the agent to consult that file first.
+>
+> **Filename convention (English-first)**: all generated files use English names (`course-package/`, `day{n}/outline.md`, `materials/`, etc.). Trigger phrases users say in chat may stay Chinese, but anything written to disk is English. See `_shared/domain-primitives.md` §0 for the full mapping.
+>
+> **Reference implementation**: `d:/GitHub/ai-workshop/` is the production reference (4-day workshop, 4125-line index.html, 1728-line course-data.js). Use it as visual + render-pattern reference; do not copy course-specific content from it.
+
 This is the **top-level skill** for producing an interactive teaching website. It coordinates 10 specialised sub-skills covering every stage from blank-slate outline to delivered PDF ebook.
 
 ## When This Skill vs. a Sub-Skill
@@ -41,7 +47,7 @@ A teaching site is built in five **core** layers, with two optional **derivative
 ─── site is now feature-complete ─── (optional derivatives below)
     ▼
 [Stage 5b] Corporate Edition branch   ← optional, parallel to ebook
-    ↓ produces: 企業包班/ folder, condensed units, inlined COURSE, asset fallback chain
+    ↓ produces: corporate-editions/ folder, condensed units, inlined COURSE, asset fallback chain
 [Stage 6]  Ebook Publishing            ← optional, ALWAYS after site is stable
     ↓ produces: dist/{name}.pdf + .docx via single composed master.md
 ```
@@ -73,10 +79,10 @@ The last three (marked ╳) are **cross-cutting** — not tied to a stage. The f
 
 Before dispatching to ANY stage (including 2–6, 5b, and the cross-cutting skills), confirm Stage 1 deliverables exist on disk:
 
-- [ ] An overview file (e.g. `課程總覽.md`) with populated `對象` / `總時數` / `每日主題` fields — not just a heading.
-- [ ] At least one per-day outline file (e.g. `Day1/課程大綱.md`) listing unit IDs and learning goals.
+- [ ] An overview file (e.g. `overview.md`) with populated `對象` / `總時數` / `每日主題` fields — not just a heading.
+- [ ] At least one per-day outline file (e.g. `day1/outline.md`) listing unit IDs and learning goals.
 
-> Shared scenario (`共用案例設定.md`) is **optional** — it's a downstream decision handled by `course-outline-design`'s Completion Gate, not an entry requirement here.
+> Shared scenario (`shared-scenario.md`) is **optional** — it's a downstream decision handled by `course-outline-design`'s Completion Gate, not an entry requirement here.
 
 **If either of the two is missing or only a stub:** do NOT dispatch downstream, even if the user explicitly named a later stage ("做電子書", "幫我寫 quiz"). Dispatch to `course-outline-design` first and tell the user:
 
@@ -90,7 +96,7 @@ If the user explicitly insists on skipping the gate ("我知道，先做就好",
    - **對象**：一句話描述學員是誰 + 先備知識
    - **總時數 + 每日時段**：例如「2 天 × 6 小時」
    - **每日主題**：Day 1 / Day 2 / ... 各一行
-2. Save those 3 bullets **verbatim** into a stub `課程總覽.md` (mark it `<!-- stub created via Stage 1 Gate override on YYYY-MM-DD -->`) before dispatching to the requested stage.
+2. Save those 3 bullets **verbatim** into a stub `overview.md` (mark it `<!-- stub created via Stage 1 Gate override on YYYY-MM-DD -->`) before dispatching to the requested stage.
 3. If the user refuses even the 3-bullet stub, fall back to the strict path — refuse the override and dispatch to `course-outline-design`.
 
 The stub is the audit trail: future sessions reading this site can immediately see Stage 1 was bypassed and recover context.
@@ -99,21 +105,21 @@ The stub is the audit trail: future sessions reading this site can immediately s
 
 After Stage 1 Gate passes, before dispatching to Stage 3 (`static-spa-conversion`), Stage 5b, or Stage 6, confirm Stage 2 deliverables exist on disk:
 
-- [ ] Each `Day{n}/課程內容.md` exists (one per Day listed in `課程總覽.md`).
-- [ ] Each `課程內容.md` contains a `## u-{id}` section for **every unit ID** declared in the matching `Day{n}/課程大綱.md` — not just one.
+- [ ] Each `day{n}/content.md` exists (one per Day listed in `overview.md`).
+- [ ] Each `content.md` contains a `## u-{id}` section for **every unit ID** declared in the matching `day{n}/outline.md` — not just one.
 - [ ] Each unit section has substance: at least one of (a) lecture script ≥ ~10 lines, (b) `任務 (tasks)` list, (c) `素材需求` references. Heading-only units fail.
 - [ ] Each unit section declares `**圖片需求 (illustrations)**` listing 1–3 entries with filename + brief spec — see Stage 5 Image Coverage Floor below.
 
 **If any item fails:** do NOT dispatch to Stage 3+, even if the user explicitly named a later stage. Dispatch to `course-content-authoring` first and tell the user:
 
-> 「outline 在，但 Day {n} 的 `課程內容.md` {缺/空殼/單元 u-{id} 沒寫}。直接做網頁會生出薄薄的殼 — 學員看到的只是標題清單，沒有實質教學內容。先用 `course-content-authoring` 把每個單元的 lecture / tasks / 圖片需求補完，比之後重做整套網頁省好幾倍時間。」
+> 「outline 在，但 Day {n} 的 `content.md` {缺/空殼/單元 u-{id} 沒寫}。直接做網頁會生出薄薄的殼 — 學員看到的只是標題清單，沒有實質教學內容。先用 `course-content-authoring` 把每個單元的 lecture / tasks / 圖片需求補完，比之後重做整套網頁省好幾倍時間。」
 
 ### Stage 2 Override Policy (thin-demo escape hatch)
 
 If the user explicitly insists on a thin demo ("先做殼就好", "我只要 demo 給客戶看版型", "skip content"), proceed under these conditions:
 
 1. State explicitly in chat what they're trading away: thin demo will have unit titles only, no lecture body, placeholder `<div>` instead of illustrations, tasks as empty checkboxes.
-2. Mark every affected `Day{n}/課程內容.md` (create as stub if missing) with header comment `<!-- thin-demo stub: Stage 2 bypassed on YYYY-MM-DD — re-enter course-content-authoring before any real student sees this -->`.
+2. Mark every affected `day{n}/content.md` (create as stub if missing) with header comment `<!-- thin-demo stub: Stage 2 bypassed on YYYY-MM-DD — re-enter course-content-authoring before any real student sees this -->`.
 3. When generating `course-data.js`, set `__thinDemo: true` on each affected unit so the SPA renders a "本單元尚未填內容" badge — students who somehow land on a demo build can see it's not real.
 
 Without all three, do not proceed. Refuse and dispatch to `course-content-authoring`.
@@ -137,7 +143,7 @@ This floor is checked **after** Stage 4 finishes (interactivity wired) and **bef
 
 After Stage 1 Gate AND Stage 2 Gate pass, look for these signals to pick the right downstream stage:
 
-- **Outline `.md` exists, but `Day{n}/課程內容.md` is missing or thin** → Stage 2 (`course-content-authoring`). Skipping to Stage 3 is gated — see Stage 2 Gate above.
+- **Outline `.md` exists, but `day{n}/content.md` is missing or thin** → Stage 2 (`course-content-authoring`). Skipping to Stage 3 is gated — see Stage 2 Gate above.
 - **Content `.md` complete, but no `course-data.js`** → Stage 3 (`static-spa-conversion`).
 - **`course-data.js` exists, but `index.html` has no renderers / no local serve** → Stage 3.
 - **SPA renders, but progress isn't persisted / no responsive / no theme** → Stage 4.
@@ -152,7 +158,7 @@ Ambiguous? Ask one short question, then dispatch. Don't try to do all stages at 
 
 1. **Never skip stages forward.** Don't generate Stage 3 SPA from a half-baked Stage 1 outline — the structural mismatches multiply. If the user wants to skip, say so explicitly.
 
-2. **Always trace back-references.** When the user modifies a downstream artifact (e.g. "add unit u-6 to day 2"), update upstream (`課程大綱.md`) AND downstream (`course-data.js`, related visuals) in the same change. Half-updated sites accumulate technical debt very fast.
+2. **Always trace back-references.** When the user modifies a downstream artifact (e.g. "add unit u-6 to day 2"), update upstream (`outline.md`) AND downstream (`course-data.js`, related visuals) in the same change. Half-updated sites accumulate technical debt very fast.
 
 3. **Course-specific knowledge belongs to the user's content, not to a skill.** The sub-skills are intentionally agnostic to the *topic* of the course (AI workshop / cooking class / accounting training — same pipeline). If a sub-skill seems to be hardcoding domain examples, that's a smell.
 

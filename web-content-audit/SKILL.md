@@ -5,6 +5,10 @@ description: Use this skill when you need to verify cross-file data/asset consis
 
 # Web Content Audit
 
+> **Schema authority**: cross-file consistency rules (3-place sync for materials, task ID stability, quiz renumber trap) are codified in [`_shared/domain-primitives.md`](../_shared/domain-primitives.md) §13. Audit scripts in this skill operationalise those rules.
+>
+> **Filename convention (English-first)**: audit reports land under `data/audit-*.md`; scripts under `scripts/audit-*.mjs`.
+
 This skill produces **audit scripts** that read source files and deployed data, compare them, and emit a human-readable report. The goal is not to gatekeep deployment (that's verification's job) — it's to surface drift that humans should review.
 
 ## When to Invoke
@@ -83,8 +87,8 @@ When `window.COURSE` is inlined in `index.html` (corporate edition), it can drif
 
 ```js
 // scripts/audit-corp-content.mjs
-const inlined = await loadCourseFromIndexHtml('企業包班/客戶_6h/index.html');
-const source = await loadSourceMarkdown('完整課程包/');
+const inlined = await loadCourseFromIndexHtml('corporate-editions/client_6h/index.html');
+const source = await loadSourceMarkdown('course-package/');
 
 const report = ['# Corporate edition content audit\n'];
 
@@ -181,7 +185,7 @@ Lead with the summary and emoji-prefix every section. The audit's job is to be t
 The pattern from `static-spa-conversion`: every material must appear in (1) filesystem, (2) `course-data.js:materials[]`, (3) `getMaterialUrl()` router. Audit script:
 
 ```js
-const fsFiles = new Set(await fs.readdir('完整課程包/教學素材/'));
+const fsFiles = new Set(await fs.readdir('course-package/materials/'));
 const dataMaterials = new Set(COURSE.materials.map(m => routerNameToFile(m.name)));
 const routerCoverage = extractRouterRules(indexHtmlContent);
 

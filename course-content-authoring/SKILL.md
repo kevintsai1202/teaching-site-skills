@@ -5,18 +5,22 @@ description: Use this skill when an outline exists and you need to fill in the a
 
 # Course Content Authoring
 
+> **Schema authority**: all primitive field names (unit / concept / prompt / task / material / quiz / faq / illustration) come from [`_shared/domain-primitives.md`](../_shared/domain-primitives.md). When this skill mentions a field, that file is the source of truth.
+>
+> **Filename convention (English-first)**: all generated files and directories use English names. The mapping from legacy Chinese names is in `_shared/domain-primitives.md` §0.
+
 This skill produces the **teaching substance** of a course: the things a learner reads, copies, listens to, or works through. It anchors every artifact to the outline IDs from `course-outline-design`, so the next stage (SPA conversion) can wire them up mechanically.
 
 ## Deliverables (Standard Layout)
 
 ```
-完整課程包/   (your project's content root)
-├── Day{n}/
-│   ├── 課程大綱.md           ← from outline stage (do NOT edit here)
-│   └── 課程內容.md           ← THIS skill writes: lecture script, prompts, exercises, references
-├── 共用案例設定.md            ← from outline stage
-├── 課程輔助文件.md            ← THIS skill writes: FAQ, environment setup, pre-reading
-└── 教學素材/                  ← THIS skill writes: standalone learner artifacts
+course-package/   (your project's content root)
+├── day{n}/
+│   ├── outline.md           ← from outline stage (do NOT edit here)
+│   └── content.md           ← THIS skill writes: lecture script, prompts, exercises, references
+├── shared-scenario.md            ← from outline stage
+├── supporting-docs.md            ← THIS skill writes: FAQ, environment setup, pre-reading
+└── materials/                  ← THIS skill writes: standalone learner artifacts
     ├── README.md             ← index of materials
     └── *.md, *.csv, *.yaml   ← samples, templates, datasets
 ```
@@ -27,13 +31,13 @@ The example workshop uses these — they're **examples**, not requirements. Deci
 
 | Type | Format | When to use |
 |---|---|---|
-| Lecture script | `.md` | Per-day teaching narrative, embedded in `課程內容.md` |
+| Lecture script | `.md` | Per-day teaching narrative, embedded in `content.md` |
 | Sample document | `.md` | A "before" artifact learners will improve (e.g. an FAQ, a policy doc) |
 | Tabular dataset | `.csv` (UTF-8 BOM!) | Practice data for AI processing exercises |
 | Structured config | `.yaml` | When the exercise involves declarative configuration |
 | PDF reference | `.pdf` | Official documents (laws, regulations) — usually external sources |
 | Prompt template | `.md` block | Domain-specific reusable prompts (this course uses **RTFC** framework, others may not — adapt to your course's pedagogy) |
-| Quiz items | inline in `課程內容.md` or separate | Pre-test, post-test, comprehension checks |
+| Quiz items | inline in `content.md` or separate | Pre-test, post-test, comprehension checks |
 | Worksheets | `.md` | Fill-in templates learners complete |
 
 > **About prompt templates**: This skill is **agnostic** to which prompt framework you use. RTFC (Role / Task / Format / Context) was used in the original workshop, but if your course teaches a different framework (e.g. CRISPE, COSTAR, plain examples), use that. Don't force RTFC into a course where it doesn't fit. The framework is *part of the course content*, not a property of this skill.
@@ -53,7 +57,7 @@ Without it, Excel on Windows mis-detects encoding and shows mojibake. Learners w
 Every artifact you produce must trace to a unit ID. Use this header pattern in lecture notes:
 
 ```markdown
-## u-3: {Unit title from 課程大綱.md}
+## u-3: {Unit title from outline.md}
 
 **對應任務**: d2-u3-t1, d2-u3-t2
 **對應素材**: 客訴處理SOP.md, FAQ官方版.md
@@ -69,7 +73,7 @@ Why: the SPA conversion stage will read these markers to auto-link tasks, materi
 
 ## Task IDs Are Forever
 
-When writing task descriptions inside `課程內容.md`, assign each task a stable ID (e.g. `d2-u3-t1`). These IDs will become **localStorage keys** in the deployed website. Three rules:
+When writing task descriptions inside `content.md`, assign each task a stable ID (e.g. `d2-u3-t1`). These IDs will become **localStorage keys** in the deployed website. Three rules:
 
 1. **Never rename** a published task ID. Students' progress is keyed to it.
 2. **Never reuse** a deleted task ID. If you remove a task, the ID retires permanently.
@@ -87,7 +91,7 @@ If the course has a quiz, write items numbered sequentially (`q1`, `q2`, ...). B
 
 ## Hidden Materials Pattern
 
-Some materials are **for instructors only** (answer keys, pre/post-test scoring) or **conditional** (only shown if a feature flag is on). Mark them explicitly in `教學素材/README.md`:
+Some materials are **for instructors only** (answer keys, pre/post-test scoring) or **conditional** (only shown if a feature flag is on). Mark them explicitly in `materials/README.md`:
 
 ```markdown
 | 素材 | 對象 | 備註 |
@@ -110,12 +114,12 @@ The SPA conversion stage will read this column and exclude instructor-only items
 
 Before declaring "content draft complete" and suggesting `static-spa-conversion`, every item below must have a **written artefact** in the corresponding `.md` file (not just a verbal "yes"). Walk the user through them; if an artefact is thin or missing, ask one clarifying question and finish it before moving on.
 
-1. **Per-day `課程內容.md` exists** for every Day declared in `課程總覽.md` `每日主題` table. A Day file with only the title heading fails — it must contain unit sections.
-2. **Every outline unit ID has a matching `## u-{id}` section** in its day's `課程內容.md`. Run a quick diff: list of unit IDs in `Day{n}/課程大綱.md` must be a subset of `## u-` headings in `Day{n}/課程內容.md`. Missing sections fail the gate.
+1. **Per-day `content.md` exists** for every Day declared in `overview.md` `每日主題` table. A Day file with only the title heading fails — it must contain unit sections.
+2. **Every outline unit ID has a matching `## u-{id}` section** in its day's `content.md`. Run a quick diff: list of unit IDs in `day{n}/outline.md` must be a subset of `## u-` headings in `day{n}/content.md`. Missing sections fail the gate.
 3. **Every unit section has substance** — at least one of: lecture script ≥ ~10 lines, `**對應任務**` listing real task IDs, `**對應素材**` listing real material filenames. A unit that only has a heading + `TODO` placeholder fails.
 4. **Every unit section declares `**圖片需求 (illustrations)**`** with 1–3 entries. Each entry must specify (a) filename stem (e.g. `day2-u3-hero.png`), (b) image kind (`hero` / `diagram` / `screenshot` / `scene`), (c) one-line spec for the visual asset author. Units that genuinely need no image must declare a single waiver line: `- waived: {reason, e.g. 5-min admin slot}`. Silence does not pass.
 5. **Quiz items (if applicable) tagged with `sourceUnit`** — every `q*` item points to a real unit ID so wrong answers can route students back to the source chapter. Untagged items fail.
-6. **`教學素材/README.md` exists** with the material index, distinguishing 學員 vs 講師 columns (see Hidden Materials Pattern above).
+6. **`materials/README.md` exists** with the material index, distinguishing 學員 vs 講師 columns (see Hidden Materials Pattern above).
 
 If the user pushes "可以了，先轉成網頁" before all items have written artefacts, refuse politely:
 
@@ -127,9 +131,9 @@ If the user explicitly demands a thin demo (與 `teaching-site` Stage 2 Override
 
 When this stage finishes (Completion Gate passed), you should have:
 
-- Per-day `課程內容.md` filled in, every outline unit ID covered by a `## u-{id}` section
+- Per-day `content.md` filled in, every outline unit ID covered by a `## u-{id}` section
 - Each unit section: lecture script + tasks + materials refs + `圖片需求 (illustrations)` 1–3 entries
-- All material files in `教學素材/` with an index README distinguishing 學員 / 講師 items
+- All material files in `materials/` with an index README distinguishing 學員 / 講師 items
 - Quiz draft (if applicable) numbered `q1..qN` with `sourceUnit` source-chapter tags
 - Every artifact traceable to an outline unit ID
 

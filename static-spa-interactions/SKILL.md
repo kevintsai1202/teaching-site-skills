@@ -5,6 +5,10 @@ description: Use this skill when a vanilla static SPA scaffold exists and needs 
 
 # Static SPA Interactions
 
+> **Schema authority**: the `Task` primitive (id-as-localStorage-key rules) and the `QuizItem` primitive (storage of selected option) come from [`_shared/domain-primitives.md`](../_shared/domain-primitives.md) §8 and §10. localStorage schema lives in §8.
+>
+> **Reference implementation**: `d:/GitHub/ai-workshop/index.html:2900-3030` for `renderSidebar / setupScrollSpy / applyTheme / setupFadeIn` patterns.
+
 This skill adds the **interaction layer** to a vanilla SPA: state, navigation, theme, responsiveness, accessibility. Each pattern below is a self-contained module that can be added independently.
 
 > The patterns here are documented because they all hide subtle bugs that took real time to find in the example workshop. Read the **"Why"** notes carefully — they're not optional context.

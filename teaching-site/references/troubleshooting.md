@@ -7,7 +7,7 @@ Map common reported symptoms to the sub-skill / audit / verification path most l
 **Diagnosis**: Three-place sync was incomplete.
 
 **Path**: `web-content-audit` (run material-references audit) → identify which of the three places is missing → patch:
-- If file missing → put it in `完整課程包/教學素材/`
+- If file missing → put it in `course-package/materials/`
 - If `course-data.js:materials[]` missing → `course-content-authoring`
 - If `getMaterialUrl()` rule missing → `static-spa-conversion`
 

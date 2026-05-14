@@ -5,6 +5,10 @@ description: Use this skill when an existing multi-day public-class teaching sit
 
 # Course Corporate Edition
 
+> **Schema authority**: all `window.COURSE` field names come from [`_shared/domain-primitives.md`](../_shared/domain-primitives.md).
+>
+> **Filename convention (English-first)**: corporate editions live under `corporate-editions/{client}_{hours}h/`. Per-edition folders use `materials/`, `assets/`, `index.html`, `README.md`. Legacy Chinese names (`企業包班/`, `教學素材/`) are deprecated.
+
 This skill takes an existing public-class teaching site and produces a **corporate edition**: shorter, brand-customisable, single-folder deliverable.
 
 ## When to Invoke
@@ -31,12 +35,13 @@ Corporate: `course-data` is **inlined** as `<script>window.COURSE = { ... }</scr
 Corporate edition has its own `assets/` folder, but **falls back to the public-class `assets/`** for anything not overridden:
 
 ```
-企業包班/客戶_6h/
+corporate-editions/client_6h/
 ├── index.html              ← inline COURSE
 ├── assets/                 ← corporate-specific overrides (logo, customised hero)
-└── 教學素材/                ← curated subset (~11 files vs. public's ~30)
+└── materials/              ← curated subset (~11 files vs. public's ~30)
                               ↓ falls back to
 project-root/assets/         ← public class's full asset library
+project-root/course-package/materials/  ← public class's full material library
 ```
 
 Implementation: every asset reference tries the corporate path first; on 404, it tries the public-class path. The bundled ebook builder does the same in its compose layer:
@@ -60,20 +65,20 @@ async function findAsset(filename) {
 ## Folder Convention
 
 ```
-專案根目錄/
-├── (公開班的所有檔案)
-├── 企業包班/
-│   ├── 客戶A_6h/                        ← 通用版（虛構案例，可賣給多家）
+project-root/
+├── (all public-class files)
+├── corporate-editions/
+│   ├── clientA_6h/                     ← Generic edition (fictional case, sellable to many clients)
 │   │   ├── index.html
-│   │   ├── README.md                   ← 寄送 / HR 導引
-│   │   ├── assets/                     ← 此版專屬覆蓋
-│   │   └── 教學素材/                    ← 此版精選素材
-│   └── 客戶B_濃縮版/                    ← 真實客戶客製版
-│       └── (同上)
-└── assets/                              ← 公開班完整素材（被 fallback）
+│   │   ├── README.md                   ← shipping / HR onboarding notes
+│   │   ├── assets/                     ← edition-specific overrides
+│   │   └── materials/                  ← edition-specific curated materials
+│   └── clientB_condensed/              ← Real-client custom edition
+│       └── (same shape)
+└── assets/                              ← public-class full asset library (fallback target)
 ```
 
-> 通用版 vs 客製版的分界：通用版用虛構公司名（如「綠野選物」）作為案例，可被多家客戶用。客製版才把案例置換成真實客戶資料。
+> **Generic vs custom edition**: the generic edition uses a fictional company name (e.g. "GreenField Select") as the running case — sellable to multiple clients. Custom editions replace the case with real client data only on demand.
 
 ## Condensing Strategy (24h → 6h)
 
@@ -153,7 +158,7 @@ The pattern: one verify script per concern, all under `scripts/` with the `corp-
 ## Hand-off
 
 When this skill finishes:
-- A new folder under `企業包班/{client}_{hours}h/` is ready to zip.
+- A new folder under `corporate-editions/{client}_{hours}h/` is ready to zip.
 - `README.md` inside explains startup (double-click), HR notes, and a course summary.
 - Verify scripts pass.
 
