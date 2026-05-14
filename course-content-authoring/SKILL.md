@@ -57,11 +57,15 @@ Every artifact you produce must trace to a unit ID. Use this header pattern in l
 
 **對應任務**: d2-u3-t1, d2-u3-t2
 **對應素材**: 客訴處理SOP.md, FAQ官方版.md
+**圖片需求 (illustrations)**:
+- `day2-u3-hero.png` — hero / 主視覺：{學員角色} 在 {情境} 操作的場景圖（AI 生圖）
+- `day2-u3-flow.svg` — 概念流程：{步驟 A → B → C}（手繪 SVG，含中文標籤）
+- `day2-u3-example.png` — 結果範例截圖（選填）
 
 {lecture content here}
 ```
 
-Why: the SPA conversion stage will read these markers to auto-link tasks, materials, and content. If you skip them, the SPA author has to re-read everything to figure out the wiring.
+Why: the SPA conversion stage will read these markers to auto-link tasks, materials, content, **and visual asset slots**. If you skip them, the SPA author has to re-read everything to figure out the wiring, and Stage 5 (`web-visual-assets`) has no spec to generate against — you end up with a site that has only a cover image.
 
 ## Task IDs Are Forever
 
@@ -102,12 +106,31 @@ The SPA conversion stage will read this column and exclude instructor-only items
 - **Long flat material list with no instructor / learner distinction** — by Day 4 the instructor doesn't know which file is what.
 - **Forgetting CSV BOM** — see above.
 
+## Completion Gate (Hard Rule — must pass before hand-off)
+
+Before declaring "content draft complete" and suggesting `static-spa-conversion`, every item below must have a **written artefact** in the corresponding `.md` file (not just a verbal "yes"). Walk the user through them; if an artefact is thin or missing, ask one clarifying question and finish it before moving on.
+
+1. **Per-day `課程內容.md` exists** for every Day declared in `課程總覽.md` `每日主題` table. A Day file with only the title heading fails — it must contain unit sections.
+2. **Every outline unit ID has a matching `## u-{id}` section** in its day's `課程內容.md`. Run a quick diff: list of unit IDs in `Day{n}/課程大綱.md` must be a subset of `## u-` headings in `Day{n}/課程內容.md`. Missing sections fail the gate.
+3. **Every unit section has substance** — at least one of: lecture script ≥ ~10 lines, `**對應任務**` listing real task IDs, `**對應素材**` listing real material filenames. A unit that only has a heading + `TODO` placeholder fails.
+4. **Every unit section declares `**圖片需求 (illustrations)**`** with 1–3 entries. Each entry must specify (a) filename stem (e.g. `day2-u3-hero.png`), (b) image kind (`hero` / `diagram` / `screenshot` / `scene`), (c) one-line spec for the visual asset author. Units that genuinely need no image must declare a single waiver line: `- waived: {reason, e.g. 5-min admin slot}`. Silence does not pass.
+5. **Quiz items (if applicable) tagged with `sourceUnit`** — every `q*` item points to a real unit ID so wrong answers can route students back to the source chapter. Untagged items fail.
+6. **`教學素材/README.md` exists** with the material index, distinguishing 學員 vs 講師 columns (see Hidden Materials Pattern above).
+
+If the user pushes "可以了，先轉成網頁" before all items have written artefacts, refuse politely:
+
+> 「Stage 2 還有 N 個單元沒寫實質內容（或沒設圖片需求）。直接進 Stage 3 會生出薄殼網頁，學員看到只有標題 + 沒插圖。先把第 X 項補上，大概 Y 分鐘，比之後重做網頁省好幾倍。」
+
+If the user explicitly demands a thin demo (與 `teaching-site` Stage 2 Override Policy 相同條件)：依照 orchestrator 文件的三步驟（標 stub 註解、設 `__thinDemo: true`、明確告知學員顯示效果）才放行，不要在 Stage 2 內部偷偷放水。
+
 ## Hand-off
 
-When this stage finishes, you should have:
-- Per-day `課程內容.md` filled in
-- All material files in `教學素材/` with an index README
-- Quiz draft (if applicable) numbered `q1..qN` with source-chapter tags
+When this stage finishes (Completion Gate passed), you should have:
+
+- Per-day `課程內容.md` filled in, every outline unit ID covered by a `## u-{id}` section
+- Each unit section: lecture script + tasks + materials refs + `圖片需求 (illustrations)` 1–3 entries
+- All material files in `教學素材/` with an index README distinguishing 學員 / 講師 items
+- Quiz draft (if applicable) numbered `q1..qN` with `sourceUnit` source-chapter tags
 - Every artifact traceable to an outline unit ID
 
-Tell the user: "content draft complete. Next stage (`static-spa-conversion`) will convert this into `course-data.js` + `index.html`. Don't change unit IDs or task IDs from this point — they'll become localStorage keys."
+Tell the user: "content draft complete. Next stage (`static-spa-conversion`) will convert this into `course-data.js` + `index.html`, including an `illustrations: []` array per unit derived from your `圖片需求` blocks. After Stage 3/4, `web-visual-assets` will fulfil those slots — your spec lines become its prompt input. Don't change unit IDs or task IDs from this point — they'll become localStorage keys."

@@ -141,13 +141,55 @@ assets/
 
 ## Wiring Assets into the SPA
 
-In `course-data.js`, every illustratable concept gets an `illustration` field:
+In `course-data.js`, every unit carries an `illustrations[]` array (1–3 entries) populated from the `圖片需求` blocks written in Stage 2:
 
 ```js
-{ id: 'u-3', title: '...', illustration: 'day1-u3.png', ... }
+{
+  id: 'u-3',
+  title: '...',
+  illustrations: [
+    { name: 'day1-u3-hero.png',    kind: 'hero',       alt: '...', spec: '...' },
+    { name: 'day1-u3-flow.svg',    kind: 'diagram',    alt: '...', spec: '...' },
+    { name: 'day1-u3-example.png', kind: 'screenshot', alt: '...', spec: '...' }  // optional 3rd
+  ],
+  // ...
+}
 ```
 
-`renderUnit` calls `renderIllustration(unit.illustration)` which handles PNG-first, SVG-fallback.
+`renderUnit` iterates `unit.illustrations` and calls `renderIllustration(entry)`, which handles PNG-first / SVG-fallback per entry. Render hero first (above the fold), then diagram, then screenshot — in that order.
+
+**Legacy single-`illustration` field**: older `course-data.js` files use `illustration: 'foo.png'` (single string). Treat it as `illustrations: [{ name: 'foo.png', kind: 'hero' }]` and migrate to the array form when convenient. Don't rely on the legacy shape for new sites.
+
+## Coverage Floor (Hard Rule — 1–3 illustrations per unit)
+
+A teaching site that ships with only a cover image looks like an unfinished draft — Stage 5 must hit a minimum coverage before declaring the site feature-complete:
+
+- [ ] **Every unit** in `course-data.js` has `illustrations.length >= 1` (and `<= 3`).
+- [ ] At least one entry per unit has a real file under `assets/` (PNG or SVG). Pure-stub units (`{ kind: 'placeholder' }` everywhere) fail.
+- [ ] Genuine no-image units carry an explicit waiver: `illustrations: [{ kind: 'waived', reason: '...' }]`. Silence — i.e. an empty array — fails the floor.
+- [ ] Cover image (`assets/cover.png` or equivalent) exists in addition to per-unit images. Cover does NOT count toward any unit's 1–3 quota.
+
+When the floor is unmet, the site cannot be declared "feature-complete" and Stages 5b / 6 must NOT be dispatched yet — see `teaching-site/SKILL.md` Stage 5 Image Coverage Floor for the orchestrator-level enforcement.
+
+### Batch-generation pattern (recommended)
+
+Don't generate images one unit at a time. Build a manifest from `course-data.js` and run a batch:
+
+```js
+// scripts/generate-illustrations.mjs
+const manifest = [];
+for (const dayKey of ['day1', 'day2', 'day3', 'day4']) {
+  for (const unit of window.COURSE[dayKey].units) {
+    for (const ill of (unit.illustrations || [])) {
+      if (ill.kind === 'waived') continue;
+      manifest.push({ name: ill.name, prompt: ill.spec, kind: ill.kind });
+    }
+  }
+}
+// → feed manifest to AI image API in parallel batches of 4–6
+```
+
+Why batch: style consistency. Single-unit ad-hoc generation drifts. A batch with the same style prefix produces a coherent visual system.
 
 ## Verification
 

@@ -12,6 +12,8 @@ The actual hard part of teaching site maintenance: every change ripples to other
 - [ ] New material file dropped into `教學素材/` folder → added to `course-data.js:materials[]` AND in the SPA's material URL router (`getMaterialUrl()`)
 - [ ] Quiz item count change → updates BOTH `quiz[]` array AND every hardcoded "(N題)" / "— / N" / "passing score" string in the SPA (typically 5 places)
 - [ ] Per-unit `materials[]` references match `course-data.js:materials[]` item IDs
+- [ ] Every outline unit ID has a matching `## u-{id}` section in the corresponding `Day{n}/課程內容.md` (no orphaned outline units)
+- [ ] Every unit section declares `**圖片需求 (illustrations)**` with 1–3 entries (or an explicit `waived` line) — this is the Stage 5 input contract
 
 ## After Stage 3 (SPA wiring)
 
@@ -29,10 +31,12 @@ The actual hard part of teaching site maintenance: every change ripples to other
 
 ## After Stage 5 (visuals)
 
-- [ ] Every image referenced by `course-data.js:illustration` actually exists on disk
+- [ ] **Coverage Floor**: every unit in `course-data.js` has `illustrations.length >= 1` (and `<= 3`); units that genuinely need no image carry `illustrations: [{ kind: 'waived', reason: '...' }]` — empty arrays fail
+- [ ] Every image referenced by `course-data.js:illustrations[].name` (or legacy `illustration`) actually exists on disk
 - [ ] PNG-first + SVG fallback path is intact for AI-generated images
 - [ ] All AI illustrations use the **same style prompt** (consistency across the course)
 - [ ] No image embeds Chinese text inside the PNG (AI usually fails this — use SVG instead)
+- [ ] Cover image exists **in addition** to per-unit images (cover does NOT count toward any unit's 1–3 quota)
 
 ## After Stage 5b (Corporate Edition)
 

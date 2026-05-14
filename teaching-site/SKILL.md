@@ -82,7 +82,7 @@ Before dispatching to ANY stage (including 2–6, 5b, and the cross-cutting skil
 
 > 「我看到還沒有完整的課程綱要 — 直接跳到 Stage N 會讓後面每改一次 outline 就連動多個檔案重做。先用 `course-outline-design` 把 outline 鎖定，大概 10 分鐘決策，省下後續數小時 rework。」
 
-### Override Policy (lenient with audit trail)
+### Stage 1 Override Policy (3-bullet escape hatch)
 
 If the user explicitly insists on skipping the gate ("我知道，先做就好", "skip the outline, just do X"), proceed under these conditions:
 
@@ -95,16 +95,56 @@ If the user explicitly insists on skipping the gate ("我知道，先做就好",
 
 The stub is the audit trail: future sessions reading this site can immediately see Stage 1 was bypassed and recover context.
 
+## Stage 2 Gate (Hard Rule — read before dispatching to Stage 3+)
+
+After Stage 1 Gate passes, before dispatching to Stage 3 (`static-spa-conversion`), Stage 5b, or Stage 6, confirm Stage 2 deliverables exist on disk:
+
+- [ ] Each `Day{n}/課程內容.md` exists (one per Day listed in `課程總覽.md`).
+- [ ] Each `課程內容.md` contains a `## u-{id}` section for **every unit ID** declared in the matching `Day{n}/課程大綱.md` — not just one.
+- [ ] Each unit section has substance: at least one of (a) lecture script ≥ ~10 lines, (b) `任務 (tasks)` list, (c) `素材需求` references. Heading-only units fail.
+- [ ] Each unit section declares `**圖片需求 (illustrations)**` listing 1–3 entries with filename + brief spec — see Stage 5 Image Coverage Floor below.
+
+**If any item fails:** do NOT dispatch to Stage 3+, even if the user explicitly named a later stage. Dispatch to `course-content-authoring` first and tell the user:
+
+> 「outline 在，但 Day {n} 的 `課程內容.md` {缺/空殼/單元 u-{id} 沒寫}。直接做網頁會生出薄薄的殼 — 學員看到的只是標題清單，沒有實質教學內容。先用 `course-content-authoring` 把每個單元的 lecture / tasks / 圖片需求補完，比之後重做整套網頁省好幾倍時間。」
+
+### Stage 2 Override Policy (thin-demo escape hatch)
+
+If the user explicitly insists on a thin demo ("先做殼就好", "我只要 demo 給客戶看版型", "skip content"), proceed under these conditions:
+
+1. State explicitly in chat what they're trading away: thin demo will have unit titles only, no lecture body, placeholder `<div>` instead of illustrations, tasks as empty checkboxes.
+2. Mark every affected `Day{n}/課程內容.md` (create as stub if missing) with header comment `<!-- thin-demo stub: Stage 2 bypassed on YYYY-MM-DD — re-enter course-content-authoring before any real student sees this -->`.
+3. When generating `course-data.js`, set `__thinDemo: true` on each affected unit so the SPA renders a "本單元尚未填內容" badge — students who somehow land on a demo build can see it's not real.
+
+Without all three, do not proceed. Refuse and dispatch to `course-content-authoring`.
+
+## Stage 5 Image Coverage Floor (Hard Rule — applies before declaring "site feature-complete")
+
+A site that ships with only a cover image and bare text feels skeletal — learners disengage in the first scroll. Before declaring Stages 1–5 done (and therefore eligible for Stage 5b / 6 dispatch), confirm:
+
+- [ ] Every unit in `course-data.js` has an `illustrations[]` array with **1–3 entries**. (The legacy single `illustration: 'foo.png'` field counts as 1; treat it as `illustrations: [{ name: 'foo.png', kind: 'hero' }]` for this check.)
+- [ ] At least one entry per unit resolves to an existing file under `assets/` (the others may still be SVG fallback stubs while Stage 5 is mid-flight).
+- [ ] If a unit genuinely needs no illustration (rare — e.g. a 5-min administrative slot, a quiz-only unit), record an explicit waiver: `illustrations: [{ kind: 'waived', reason: '...' }]`. Silence does not pass.
+- [ ] `assets/illustrations/` (or your project's equivalent) contains the cover **plus** the per-unit images — not just the cover.
+
+**If unmet:** dispatch to `web-visual-assets` and tell the user:
+
+> 「目前有 N 個單元沒插圖（或全站只有封面）。學員一打開會覺得內容很空、像草稿。建議先用 `web-visual-assets` 跑一輪批次生圖（每單元 1–3 張，搭配 PNG-first / SVG-fallback），再進入電子書／企業包班分支 — 否則 PDF 一印出來就是大片留白。」
+
+This floor is checked **after** Stage 4 finishes (interactivity wired) and **before** dispatching to Stage 5b or 6. Stage 5b / 6 inherit whatever images exist; if you skip the floor, the corporate brochure and the PDF ebook will both ship empty.
+
 ## How to Detect the Current Stage
 
-After the Stage 1 Gate passes, look for these signals to pick the right downstream stage:
+After Stage 1 Gate AND Stage 2 Gate pass, look for these signals to pick the right downstream stage:
 
-- **Outline `.md` exists, but no `course-data.js`** → Stage 2 (content), or skip to 3 if user only wants a thin demo.
+- **Outline `.md` exists, but `Day{n}/課程內容.md` is missing or thin** → Stage 2 (`course-content-authoring`). Skipping to Stage 3 is gated — see Stage 2 Gate above.
+- **Content `.md` complete, but no `course-data.js`** → Stage 3 (`static-spa-conversion`).
 - **`course-data.js` exists, but `index.html` has no renderers / no local serve** → Stage 3.
 - **SPA renders, but progress isn't persisted / no responsive / no theme** → Stage 4.
-- **Site works but has placeholder `<div>` for images / 404 thumbnails** → Stage 5.
-- **Site is feature-complete, user mentions corporate / in-house / shorter version** → Stage 5b.
-- **Site is feature-complete, user wants a printed / archived / shareable file** → Stage 6.
+- **Site works but has placeholder `<div>` for images / 404 thumbnails / units missing illustrations** → Stage 5 (`web-visual-assets`).
+- **Site appears feature-complete but Stage 5 Image Coverage Floor not met** → Stage 5 first; do NOT dispatch 5b/6 yet.
+- **Site is feature-complete (all gates + floor pass), user mentions corporate / in-house / shorter version** → Stage 5b.
+- **Site is feature-complete (all gates + floor pass), user wants a printed / archived / shareable file** → Stage 6.
 
 Ambiguous? Ask one short question, then dispatch. Don't try to do all stages at once — the cross-stage rework cost is high.
 

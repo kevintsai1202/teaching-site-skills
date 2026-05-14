@@ -65,7 +65,12 @@ window.COURSE = {
         materials: [                   // optional: per-unit material refs
           { id: '...', name: '...', type: 'PDF 文件' }
         ],
-        illustration: 'day1-u1.png'    // optional: visual asset
+        illustrations: [               // 1–3 entries, see Stage 5 Coverage Floor
+          { name: 'day1-u1-hero.png',  kind: 'hero',    alt: '...', spec: '...' },
+          { name: 'day1-u1-flow.svg',  kind: 'diagram', alt: '...', spec: '...' }
+        ]
+        // legacy single `illustration: 'day1-u1.png'` still accepted; treat as
+        // illustrations: [{ name, kind: 'hero' }] and migrate when convenient
       },
       ...
     ]
