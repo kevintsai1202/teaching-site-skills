@@ -14,3 +14,6 @@ desktop.ini
 # Logs / temp
 *.log
 *.tmp
+
+# Build artifacts
+teaching-site-skills.zip
