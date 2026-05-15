@@ -1,6 +1,6 @@
 ---
 name: web-visual-assets
-description: Use this skill when a content-complete website has missing/placeholder images and needs visual assets — scenario illustrations, tool screenshots, instructor cards, conceptual diagrams, classroom location maps, QR codes. Triggers on phrases like "插圖", "工具截圖", "QR", "講師卡", "地圖", "示意圖", "Playwright 爬蟲", "AI 生圖", "visual assets", "screenshots", "illustrations". This skill covers the four asset sources (scraping, AI generation, hand-drawn SVG, generated codes), the PNG-first + SVG-fallback render pattern, and verification scripts. Usually invoked AFTER interactions are wired (so missing images are visible), but can be invoked earlier if assets are pre-planned.
+description: Use this skill when a content-complete website has missing/placeholder images and needs visual assets — scenario illustrations, tool screenshots, instructor cards, conceptual diagrams, classroom location maps, QR codes. Triggers on phrases like "插圖", "工具截圖", "QR", "講師卡", "地圖", "示意圖", "Playwright 爬蟲", "AI 生圖", "visual assets", "screenshots", "illustrations", "QR codes", "instructor cards". This skill covers the four asset sources (scraping, AI generation, hand-drawn SVG, generated codes), the PNG-first + SVG-fallback render pattern, and verification scripts. Usually invoked AFTER interactions are wired (so missing images are visible), but can be invoked earlier if assets are pre-planned.
 ---
 
 # Web Visual Assets

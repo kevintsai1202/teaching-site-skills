@@ -1,6 +1,6 @@
 ---
 name: web-visual-verification
-description: Use this skill whenever you need to verify that a web UI actually works the way it's supposed to — clicking through flows, asserting state, catching console errors, taking screenshots across multiple viewports for visual review. Triggers on phrases like "驗證網頁", "verify the site", "看看手機版有沒有壞", "視覺驗證", "Playwright 測試", "截圖比對", "RWD 驗證", "驗 sidebar", "看 console 有沒有錯", or any post-change moment where the user wants to know "did I break anything?". This is the runtime-behaviour verifier — use `web-content-audit` instead if the question is about file/data consistency rather than rendered behaviour.
+description: Use this skill whenever you need to verify that a web UI actually works the way it's supposed to — clicking through flows, asserting state, catching console errors, taking screenshots across multiple viewports for visual review. Triggers on phrases like "驗證網頁", "verify the site", "Playwright tests", "visual regression", "RWD verification", "screenshot comparison", "responsive check", "console error check", "看看手機版有沒有壞", "視覺驗證", "Playwright 測試", "截圖比對", "RWD 驗證", "驗 sidebar", "看 console 有沒有錯", or any post-change moment where the user wants to know "did I break anything?". This is the runtime-behaviour verifier — use `web-content-audit` instead if the question is about file/data consistency rather than rendered behaviour.
 ---
 
 # Web Visual Verification

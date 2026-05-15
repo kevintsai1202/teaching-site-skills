@@ -1,6 +1,6 @@
 ---
 name: static-spa-conversion
-description: Use this skill when you have structured course content (or any chapter-based dataset) in markdown form and need to turn it into a working interactive website — without picking a framework, without a build step. Triggers on phrases like "做成網頁", "轉成 SPA", "course-data.js", "render 函式", "把講義變網頁", "static site from markdown", "vanilla JS site". The output is a vanilla HTML + JS single-page app that opens with `npx serve` and persists state in localStorage. Always invoke AFTER `course-content-authoring` (content stable), BEFORE `static-spa-interactions` (this skill produces the scaffold; interactions adorn it).
+description: Use this skill when you have structured course content (or any chapter-based dataset) in markdown form and need to turn it into a working interactive website — without picking a framework, without a build step. Triggers on phrases like "做成網頁", "轉成 SPA", "course-data.js", "render 函式", "把講義變網頁", "static site from markdown", "vanilla JS site", "no-framework site", "single-page app from markdown". The output is a vanilla HTML + JS single-page app that opens with `npx serve` and persists state in localStorage. Always invoke AFTER `course-content-authoring` (content stable), BEFORE `static-spa-interactions` (this skill produces the scaffold; interactions adorn it).
 ---
 
 # Static SPA Conversion

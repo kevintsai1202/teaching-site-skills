@@ -1,6 +1,6 @@
 ---
 name: static-spa-interactions
-description: Use this skill when a vanilla static SPA scaffold exists and needs to feel like a polished product — progress persistence, sidebar + scrollspy navigation, dark/light theme, content zoom, responsive (mobile sidebar overlay), keyboard nav, fade-in entrances, toast notifications, iframe modal viewers, quiz scoring with section back-links. Triggers on phrases like "加進度勾選", "響應式", "暗色模式", "縮放", "scrollspy", "sidebar 收合", "手機版", "RWD", "quiz UX", "interactive polish". Always invoke AFTER `static-spa-conversion` (renders working), as a standalone enhancement layer.
+description: Use this skill when a vanilla static SPA scaffold exists and needs to feel like a polished product — progress persistence, sidebar + scrollspy navigation, dark/light theme, content zoom, responsive (mobile sidebar overlay), keyboard nav, fade-in entrances, toast notifications, iframe modal viewers, quiz scoring with section back-links. Triggers on phrases like "加進度勾選", "響應式", "暗色模式", "縮放", "scrollspy", "sidebar 收合", "手機版", "RWD", "dark mode", "progress tracking", "quiz UX", "interactive polish". Always invoke AFTER `static-spa-conversion` (renders working), as a standalone enhancement layer.
 ---
 
 # Static SPA Interactions
