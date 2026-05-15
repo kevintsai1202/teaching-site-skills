@@ -17,3 +17,9 @@ desktop.ini
 
 # Build artifacts
 teaching-site-skills.zip
+
+# skills CLI local artifacts
+#   .agents/         — local install directory created by `npx skills add`
+#   skills-lock.json — self-referential lockfile that goes stale after every SKILL edit
+.agents/
+skills-lock.json
